@@ -1,1 +1,65 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* Custom body background */
+body {
+  background: linear-gradient(135deg, #74b9ff 0%, #0984e3 50%, #6c5ce7 100%);
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Improve form control appearance */
+.form-control {
+  font-size: 0.95rem;
+}
+
+/* Custom button styles */
+.btn {
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+/* Custom card styles */
+.card {
+  border-radius: 12px;
+  border: none;
+}
+
+/* Icon spacing */
+.fas, .far {
+  width: 1em;
+  text-align: center;
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Utility classes */
+.text-primary {
+  color: #007bff !important;
+}
+
+/* Animation classes */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

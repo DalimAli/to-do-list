@@ -1,1 +1,68 @@
-<p>add todo works</p>
+<div class="add-todo-container">
+  <h4 class="mb-4 text-primary">Add New Todo Item</h4>
+  
+  <form [formGroup]="todoForm" (ngSubmit)="onSubmit($event)" class="add-todo-form">
+    <div class="mb-3">
+      <label for="todoText" class="form-label">Todo Item *</label>
+      <input 
+        type="text" 
+        id="todoText"
+        formControlName="text"
+        placeholder="Enter a new todo item..." 
+        class="form-control"
+        [class.is-invalid]="text?.invalid && text?.touched"
+      >
+      <div class="invalid-feedback" *ngIf="text?.invalid && text?.touched">
+        Todo item is required.
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label for="startDate" class="form-label">Start Date</label>
+          <input 
+            type="date" 
+            id="startDate"
+            formControlName="startDate"
+            class="form-control"
+          >
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="mb-3">
+          <label for="endDate" class="form-label">End Date</label>
+          <input 
+            type="date" 
+            id="endDate"
+            formControlName="endDate"
+            class="form-control"
+          >
+        </div>
+      </div>
+    </div>
+    
+    <div class="alert alert-danger" *ngIf="todoForm.hasError('dateRangeInvalid') && (startDate?.touched || endDate?.touched)">
+      <i class="fas fa-exclamation-triangle"></i>
+      End date must be after or equal to start date.
+    </div>
+    
+    <div class="d-flex gap-2 justify-content-end">
+      <button 
+        type="button" 
+        class="btn btn-outline-secondary"
+        (click)="clearForm()"
+      >
+        <i class="fas fa-eraser"></i> Clear
+      </button>
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="todoForm.invalid"
+      >
+        <i class="fas fa-plus"></i> Add Todo
+      </button>
+    </div>
+  </form>
+</div>
