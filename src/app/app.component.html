@@ -1,1 +1,20 @@
-<app-add-todo></app-add-todo>
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-8">
+      <header class="text-center mb-5">
+        <h1 class="display-4 text-primary mb-2">{{ title }}</h1>
+        <p class="lead text-muted">Organize your tasks efficiently</p>
+      </header>
+      
+      <main>
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <app-add-todo (todoAdded)="onTodoAdded($event)"></app-add-todo>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<router-outlet />

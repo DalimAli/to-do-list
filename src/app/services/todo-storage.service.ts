@@ -8,9 +8,10 @@ export class TodoStorageService {
 
   constructor() { }
 
+ 
   saveTodos(todos: TodoItem[]): void {
     try {
-      const todosJson = JSON.stringify(todos);
+      const todosJson = JSON.stringify(todos, this.dateReplacer);
       localStorage.setItem(this.STORAGE_KEY, todosJson);
     } catch (error) {
       console.error('Error saving todos to localStorage:', error);
@@ -39,4 +40,11 @@ export class TodoStorageService {
     }
   }
 
+  // Helper function to serialize Date objects
+  private dateReplacer(key: string, value: any): any {
+    if (value instanceof Date) {
+      return { __type: 'Date', value: value.toISOString() };
+    }
+    return value;
+  }
 }
