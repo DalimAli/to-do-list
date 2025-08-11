@@ -12,6 +12,15 @@
             <app-add-todo (todoAdded)="onTodoAdded($event)"></app-add-todo>
           </div>
         </div>
+
+        <app-todo-list 
+          [todos]="todos"
+          (todoUpdated)="onTodoUpdated($event)"
+          (todoDeleted)="onTodoDeleted($event)"
+          (todoCompleted)="onTodoCompleted($event)"
+          (clearAll)="clearAllTodos()"
+        ></app-todo-list>
+        
       </main>
     </div>
   </div>

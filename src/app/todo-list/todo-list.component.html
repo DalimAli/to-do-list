@@ -1,0 +1,168 @@
+<div class="todo-list-container">
+  <div class="d-flex justify-content-between align-items-center mb-4" *ngIf="todos.length > 0">
+    <h3 class="mb-0">Your Todo Items ({{ todos.length }})</h3>
+    <button 
+      class="btn btn-danger btn-sm" 
+      (click)="clearAllTodos()"
+      title="Clear all todos (confirmation required)"
+    >
+      <i class="fas fa-trash-alt"></i> Clear All
+    </button>
+  </div>
+
+  <div class="alert alert-info text-center" *ngIf="todos.length === 0">
+    <i class="fas fa-clipboard-list fa-2x mb-2"></i>
+    <p class="mb-0">No todo items yet. Add one above to get started!</p>
+  </div>
+
+  <div *ngIf="todos.length > 0">
+    <div class="card mb-3" 
+         *ngFor="let todo of todos; let i = index; trackBy: trackByTodoId" 
+         [class.border-success]="todo.completed"
+         [class.border-warning]="getDateStatus(todo) === 'due-soon'"
+         [class.border-danger]="getDateStatus(todo) === 'overdue'">
+      
+      <div class="card-body">
+        <div class="row">
+          <!-- Checkbox and Main Content -->
+          <div class="col-md-8">
+            <div class="d-flex align-items-start">
+              <div class="form-check me-3">
+                <input 
+                  class="form-check-input" 
+                  type="checkbox" 
+                  [checked]="todo.completed"
+                  (change)="toggleCompletion(i)"
+                  [id]="'todo-check-' + i"
+                >
+                <label class="form-check-label" [for]="'todo-check-' + i"></label>
+              </div>
+              
+              <div class="flex-grow-1">
+                <!-- View Mode -->
+                <div *ngIf="!isEditing(i)">
+                  <h6 class="card-title mb-2" 
+                      [class.text-decoration-line-through]="todo.completed"
+                      [class.text-muted]="todo.completed">
+                    {{ todo.text }}
+                  </h6>
+                  
+                  <div class="todo-dates" *ngIf="todo.startDate || todo.endDate">
+                    <small class="text-muted d-block">
+                      <span *ngIf="todo.startDate">
+                        <strong>Start:</strong> {{ formatDate(todo.startDate) }}
+                      </span>
+                      <span *ngIf="todo.startDate && todo.endDate" class="mx-2">|</span>
+                      <span *ngIf="todo.endDate">
+                        <strong>End:</strong> {{ formatDate(todo.endDate) }}
+                      </span>
+                    </small>
+                    
+                    <span class="badge mt-1" 
+                          [class]="'badge-' + getDateStatus(todo)"
+                          *ngIf="getDateStatusText(todo)">
+                      {{ getDateStatusText(todo) }}
+                    </span>
+                  </div>
+                </div>
+                
+                <!-- Edit Mode -->
+                <form [formGroup]="getTodoFormGroup(i)" *ngIf="isEditing(i) && isFormArrayReady()">
+                  <div class="mb-3">
+                    <label [for]="'edit-text-' + i" class="form-label">Todo Item</label>
+                    <input 
+                      type="text" 
+                      class="form-control"
+                      [class.is-invalid]="getTodoFormGroup(i).get('text')?.invalid && getTodoFormGroup(i).get('text')?.touched"
+                      formControlName="text"
+                      [id]="'edit-text-' + i"
+                    >
+                    <div class="invalid-feedback" 
+                         *ngIf="getTodoFormGroup(i).get('text')?.invalid && getTodoFormGroup(i).get('text')?.touched">
+                      Todo item is required.
+                    </div>
+                  </div>
+                  
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <label [for]="'edit-start-' + i" class="form-label">Start Date</label>
+                      <input 
+                        type="date" 
+                        class="form-control"
+                        formControlName="startDate"
+                        [id]="'edit-start-' + i"
+                      >
+                    </div>
+                    <div class="col-sm-6">
+                      <label [for]="'edit-end-' + i" class="form-label">End Date</label>
+                      <input 
+                        type="date" 
+                        class="form-control"
+                        formControlName="endDate"
+                        [id]="'edit-end-' + i"
+                      >
+                    </div>
+                  </div>
+                  
+                  <div class="alert alert-danger mt-2" 
+                       *ngIf="getTodoFormGroup(i).hasError('dateRangeInvalid')">
+                    End date must be after or equal to start date.
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Action Buttons -->
+          <div class="col-md-4">
+            <div class="d-flex justify-content-end gap-2">
+              <!-- View Mode Buttons -->
+              <div *ngIf="!isEditing(i)">
+                <button 
+                  class="btn btn-outline-primary btn-sm"
+                  (click)="startEdit(i)"
+                  title="Edit todo"
+                >
+                  <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button 
+                  class="btn btn-outline-success btn-sm ms-1"
+                  (click)="toggleCompletion(i)"
+                  [title]="todo.completed ? 'Mark as incomplete' : 'Mark as complete'"
+                >
+                  <i [class]="todo.completed ? 'fas fa-undo-alt' : 'fas fa-check'"></i>
+                </button>
+                <button 
+                  class="btn btn-outline-danger btn-sm ms-1"
+                  (click)="deleteTodo(i)"
+                  title="Delete todo (confirmation required)"
+                >
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+              
+              <!-- Edit Mode Buttons -->
+              <div *ngIf="isEditing(i) && isFormArrayReady()">
+                <button 
+                  class="btn btn-success btn-sm"
+                  (click)="saveEdit(i)"
+                  [disabled]="getTodoFormGroup(i).invalid"
+                  title="Save changes"
+                >
+                  <i class="fas fa-save"></i>
+                </button>
+                <button 
+                  class="btn btn-secondary btn-sm ms-1"
+                  (click)="cancelEdit(i)"
+                  title="Cancel editing"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
